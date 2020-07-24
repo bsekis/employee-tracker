@@ -1,7 +1,7 @@
 {
   "name": "employee-tracker",
   "version": "1.0.0",
-  "description": "",
+  "description": "content management system",
   "main": "app.js",
   "directories": {
     "lib": "lib"
@@ -9,14 +9,19 @@
   "dependencies": {},
   "devDependencies": {},
   "scripts": {
-    "start": "node your-script.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "type": "git",
+    "type": "module",
     "url": "git+https://github.com/bsekis/employee-tracker.git"
   },
-  "author": "",
+  "keywords": [
+    "employee",
+    "tracking",
+    "system"
+  ],
+  "author": "ben ekis",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/bsekis/employee-tracker/issues"
