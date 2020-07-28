@@ -6,7 +6,12 @@
   "directories": {
     "lib": "lib"
   },
-  "dependencies": {},
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "dotenv": "^8.2.0",
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  },
   "devDependencies": {},
   "scripts": {
     "start": "node app.js",

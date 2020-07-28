@@ -1,19 +1,23 @@
 // DEPENDENCIES
-import { prompt } from 'inquirer';
+const inquirer = require('inquirer');
 //const inquirer = require('inquirer');
-import 'console.table';
+require('console.table');
 
 //import connection
-import { end, connect } from './config/connection';
+const connection = require('./config/connection');
 
 //import functions to work with database
-import { viewAllEmp, getEmpRoles, queryEmpRole, getManagers, queryEmpManager, getEmpShort, updateEmpRole, updateEmpManager, addNewEmp, deleteEmp, getRolesTable, addNewRole, deleteRole, getDepts, getDeptSalaries, deleteDept, addNewDept } from './lib/db-query';
+const {
+  viewAllEmp, getEmpRoles, queryEmpRole, getManagers, queryEmpManager, getEmpShort, updateEmpRole, updateEmpManager, addNewEmp, deleteEmp,
+  getRolesTable, addNewRole, deleteRole,
+  getDepts, getDeptSalaries, deleteDept, addNewDept
+} = require('./lib/db-query');
 
 //import questions
-import menuPrompt from './lib/prompt';
-import { employeesPrompt, empViewOptions, renderManagerList, renderEmpsList, updateEmpQ } from './lib/employee-prompt';
-import { renderRolesList, rolesPrompt } from './lib/role-prompt';
-import { renderDeptsList, deptsPrompt, addDeptQ } from './lib/department-prompt';
+const menuPrompt = require('./lib/prompt');
+const { employeesPrompt, empViewOptions, renderManagerList, renderEmpsList, updateEmpQ } = require('./lib/employee-prompt');
+const { renderRolesList, rolesPrompt } = require('./lib/role-prompt');
+const { renderDeptsList, deptsPrompt, addDeptQ } = require('./lib/department-prompt');
 
 // ====================================================================================================================================================================================
 //   functions
@@ -29,7 +33,7 @@ import { renderDeptsList, deptsPrompt, addDeptQ } from './lib/department-prompt'
     --> if Departments call Departments menu */
 const entryPrompt = async () => {
 
-  const { selected_menu: menuSelect } = await prompt(menuPrompt);
+  const { selected_menu: menuSelect } = await inquirer.prompt(menuPrompt);
 
   if (menuSelect === 'Employees') {
     employeesMenu();
@@ -38,7 +42,7 @@ const entryPrompt = async () => {
   } else if (menuSelect === 'Departments') {
     departmentsMenu();
   } else {
-    end();
+    connection.end();
   }
   ;
 }
@@ -53,7 +57,7 @@ const entryPrompt = async () => {
 
 const employeesMenu = async () => {
   //console.log('employees');
-  const { employees_menu: employeesAction } = await prompt(employeesPrompt);
+  const { employees_menu: employeesAction } = await inquirer.prompt(employeesPrompt);
 
   if (employeesAction === 'View Employees') { //          View menu asks if user wants to View All E / View E by Role / View E by Manager/ (View E by Dpt)
     viewEmpMenu();
@@ -73,7 +77,7 @@ const employeesMenu = async () => {
 const viewEmpMenu = async () => {
 
   // ask user to select how they want to view employees
-  const { employees_view: empViewSelect } = await prompt(empViewOptions);
+  const { employees_view: empViewSelect } = await inquirer.prompt(empViewOptions);
 
   // View All:
   if (empViewSelect === 'View All') {
@@ -105,7 +109,7 @@ const viewEmpMenu = async () => {
         }
       ]
 
-    const { selected_role: selectedRole } = await prompt(rolesQ);
+    const { selected_role: selectedRole } = await inquirer.prompt(rolesQ);
     //console.log(selectedRole);
 
     //get employees by role selected -> db query
@@ -137,7 +141,7 @@ const viewEmpMenu = async () => {
       ]
 
     //console.log(managersQ)
-    const { selected_manager: selectedManager } = await prompt(managersQ);
+    const { selected_manager: selectedManager } = await inquirer.prompt(managersQ);
 
     //get employees by manager selected -> db query
     const empsByManager = await queryEmpManager(selectedManager);
@@ -167,12 +171,12 @@ const updateEmpMenu = async () => {
       }
     ]
   //console.log(empNamesQ);
-  const { selected_emp: selectedEmp } = await prompt(empNamesQ);
+  const { selected_emp: selectedEmp } = await inquirer.prompt(empNamesQ);
 
   //console.log(selectedEmp);
 
   //ask user to update role or manager & pass thru empUpdateId
-  const { update_select: selectedEmpUpdate } = await prompt(updateEmpQ);
+  const { update_select: selectedEmpUpdate } = await inquirer.prompt(updateEmpQ);
 
 
   if (selectedEmpUpdate === 'Role') {
@@ -195,7 +199,7 @@ const updateEmpMenu = async () => {
         }
       ]
 
-    const { selected_role: newRole } = await prompt(rolesQ);
+    const { selected_role: newRole } = await inquirer.prompt(rolesQ);
 
     //console.log(newRole);
 
@@ -219,7 +223,7 @@ const updateEmpMenu = async () => {
         }
       ]
 
-    const { selected_emp: newManager } = await prompt(empNamesQ);
+    const { selected_emp: newManager } = await inquirer.prompt(empNamesQ);
 
     updateEmpManager(newManager, selectedEmp);
 
@@ -265,7 +269,7 @@ const addEmpMenu = async () => {
     }
   ]
 
-  const newEmpData = await prompt(addEmpQ);
+  const newEmpData = await inquirer.prompt(addEmpQ);
   //console.log(newEmpData);
   addNewEmp(newEmpData);
   console.log('Employee Added!');
@@ -288,7 +292,7 @@ const delEmpMenu = async () => {
     }
   ]
 
-  let { id: delEmp } = await prompt(delEmpQ);
+  let { id: delEmp } = await inquirer.prompt(delEmpQ);
   //console.log(delEmp);
 
   deleteEmp(delEmp);
@@ -306,7 +310,7 @@ const delEmpMenu = async () => {
 // if Add call Add R prompts (title/salary/department from list)
 //if Delete call Delete R prompts (list)
 const rolesMenu = async () => {
-  const { roles_menu: rolesAction } = await prompt(rolesPrompt);
+  const { roles_menu: rolesAction } = await inquirer.prompt(rolesPrompt);
 
   if (rolesAction === 'View Roles') { // Display ID / Title / Salary / Dpt name
     viewRoles();
@@ -360,7 +364,7 @@ const addRoleMenu = async () => {
     }
   ]
 
-  const newRoleData = await prompt(addRoleQ);
+  const newRoleData = await inquirer.prompt(addRoleQ);
 
   //console.log (newRoleData);
   addNewRole(newRoleData);
@@ -386,7 +390,7 @@ const delRoleMenu = async () => {
     }
   ]
 
-  let { id: delRole } = await prompt(delRoleQ);
+  let { id: delRole } = await inquirer.prompt(delRoleQ);
   //console.log(delEmp);
 
   //delRole = 9;
@@ -408,7 +412,7 @@ const delRoleMenu = async () => {
 // if Add call Add D prompts (name)
 // if Delete call Delete R prompts (list)
 const departmentsMenu = async () => {
-  const { depts_menu: deptsAction } = await prompt(deptsPrompt);
+  const { depts_menu: deptsAction } = await inquirer.prompt(deptsPrompt);
 
   if (deptsAction === 'View Departments') { // Display ID / Title / Salary / Dpt name
     viewDepts();
@@ -447,7 +451,7 @@ const viewBudget = async () => {
     }
   ]
 
-  const { id: deptSelected } = await prompt(viewBudgetQ);
+  const { id: deptSelected } = await inquirer.prompt(viewBudgetQ);
 
   const deptSalaries = await getDeptSalaries(deptSelected);
 
@@ -464,7 +468,7 @@ const viewBudget = async () => {
 // User has selected to add department:
 const addDeptMenu = async () => {
 
-  const newDeptData = await prompt(addDeptQ);
+  const newDeptData = await inquirer.prompt(addDeptQ);
 
   addNewDept(newDeptData);
   console.log('Department Added!');
@@ -486,7 +490,7 @@ const delDeptMenu = async () => {
     }
   ]
 
-  let { id: delDept } = await prompt(delDeptQ);
+  let { id: delDept } = await inquirer.prompt(delDeptQ);
   //delDept = 5;
 
   //console.log(delDept);
@@ -499,7 +503,7 @@ const delDeptMenu = async () => {
 
 // ====================================================================================================================================================================================
 //connect to the database
-connect(err => {
+connection.connect(err => {
   if (err) throw err;
   //console.log('connected to DB');
   entryPrompt();
